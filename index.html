@@ -458,6 +458,10 @@
   </style>
 </head>
 <body>
+<!-- 🎵 오디오 파일 추가 -->
+<audio id="tenseSound" src="assets/sounds/tense.mp3" preload="auto"></audio> <!-- 긴장감 -->
+<audio id="celebrationSound" src="assets/sounds/celebration.mp3" preload="auto"></audio> <!-- 축하 -->
+
 <script type="module" src="./src/index.ts"></script>
 <script type="text/javascript">
   window.dataLayer = window.dataLayer || [];
@@ -549,6 +553,34 @@
       getReady();
     });
 
+    // 🎵 시작 버튼 클릭 시 긴장감 음악 재생 추가
+    document.querySelector('#btnStart').addEventListener('click', () => {
+      if (!ready) return;
+      document.getElementById('tenseSound').currentTime = 0;
+      document.getElementById('tenseSound').play(); // 긴장감 음악 재생
+      gtag && gtag('event', 'start', {
+        'event_category': 'roulette',
+        'event_label': 'start',
+        'value': window.roullete.getCount(),
+      });
+      window.roullete.start();
+      document.querySelector('#settings').classList.add('hide');
+      document.querySelector('#donate').classList.add('hide');
+    });
+
+     // 🎵 첫 번째 당첨자 나올 때 축하 음악 재생
+    window.roullete.addEventListener('goal', () => {
+      if (winnerType === 'first') {
+        document.getElementById('celebrationSound').currentTime = 0;
+        document.getElementById('celebrationSound').play();
+      }
+      ready = false;
+      setTimeout(() => {
+        document.querySelector('#settings').classList.remove('hide');
+        document.querySelector('#donate').classList.remove('hide');
+      }, 3000);
+    });
+    
     document.querySelector('#in_names').addEventListener('blur', () => {
       const nameSource = getNames();
       const nameSet = new Set();
